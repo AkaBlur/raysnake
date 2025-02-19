@@ -65,7 +65,7 @@ namespace Geometry {
         {
             *NextStrPosition = '\0';
 
-            DrawText(SubStrPosition.base(), TextPosDraw.x, TextPosDraw.y, FontSize, BLUE);
+            DrawText(&(*SubStrPosition), TextPosDraw.x, TextPosDraw.y, FontSize, BLUE);
 
             Vector2 UnderlinePos = Vector2Add(TextPos, {0.0f, (float) (textsize * scaleFactor)});
             DrawLineEx(UnderlinePos, Vector2Add(UnderlinePos, {(float) TextLength, 0}), 2.0f, BLUE);
@@ -87,7 +87,7 @@ namespace Geometry {
             TextPosDraw = {TextPos.x, (TextPos.y + LineHeight * LineIndex)};
             menuItemPositions.push_back(TextPosDraw);
 
-            DrawText(SubStrPosition.base(), TextPosDraw.x, TextPosDraw.y, FontSize, BLACK);
+            DrawText(&(*SubStrPosition), TextPosDraw.x, TextPosDraw.y, FontSize, BLACK);
 
             LineIndex++;
             NextStrPosition++;

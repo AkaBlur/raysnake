@@ -21,8 +21,14 @@ Maybe there are some things also different...
 
 ## Dev
 **Prerequisites**
-- C++-17 toolchain (tested with gcc & clang)
+- C++-17 toolchain (tested with gcc & clang & MSVC)
 - CMake (>= 3.6)
+
+Make sure to **clone recursively!**
+
+Also I didn't bother to set up debugging for Visual Studio,
+so there you need to manually edit the Working Directory and set it
+to the binary directory. Otherwise the assets won't load.
 
 Build like any other CMake project
 ```bash

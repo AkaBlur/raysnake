@@ -139,7 +139,7 @@ void GameLayer::Init()
 void GameLayer::Reset()
 {
     m_GameSettings = GameSettings();
-    Snake newSnake = Snake(m_GameSettings.BoardSize, m_GameSettings.BoardSize);
+    Snake newSnake(m_GameSettings.BoardSize, m_GameSettings.BoardSize);
     m_Snake = newSnake;
 
     m_GameState = GameState::Playing;

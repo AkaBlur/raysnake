@@ -36,7 +36,7 @@ struct SnakePart
 
 class Snake {
 public:
-    Snake(uint8_t fieldSizeX, uint8_t fieldSizeY);
+    explicit Snake(uint8_t fieldSizeX, uint8_t fieldSizeY);
     
     Snake& operator=(Snake& copy);
     
