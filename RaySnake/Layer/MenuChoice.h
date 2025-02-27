@@ -1,9 +1,5 @@
-//
-// Created by filip on 15.02.25.
-//
+#pragma once
 
-#ifndef MENUCHOICE_H
-#define MENUCHOICE_H
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -11,7 +7,8 @@
 #include "raylib.h"
 
 
-class MenuChoice {
+class MenuChoice
+{
 public:
     MenuChoice(const char* menuTitle) :
         m_MenuTitle(menuTitle)
@@ -48,7 +45,3 @@ private:
     void m_UpdateMenuString();
 
 };
-
-
-
-#endif //MENUCHOICE_H

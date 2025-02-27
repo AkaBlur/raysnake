@@ -1,7 +1,3 @@
-//
-// Created by filip on 15.02.25.
-//
-
 #include "MenuChoice.h"
 
 #include <sstream>

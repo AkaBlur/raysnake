@@ -1,9 +1,4 @@
-//
-// Created by filip on 16.01.25.
-//
-
-#ifndef DRAWGEOMETRY_H
-#define DRAWGEOMETRY_H
+#pragma once
 
 #include <cstdint>
 #include <string>
@@ -11,7 +6,8 @@
 
 #include "raylib.h"
 
-namespace Geometry {
+namespace Geometry
+{
     // Basic shapes
     void DrawTriangleEquilateral(const Vector2& midpoint, float length, float rotation, Color color);
     void DrawArrow(Vector2 startPosition, float length, float rotation, Color color);
@@ -19,6 +15,9 @@ namespace Geometry {
     // keyboard-key
     void DrawKey(const Vector2& position, float size, const char* key, Color color, uint32_t keycodeLength = 1);
 
+    // raw text
+    void DrawTextMultiline(const Vector2& position, const std::string& text, int textsize, float scaleFactor, Color color);
+    
     // textboxes
     void DrawTextboxCentered(const char* text, int textsize, float scaleFactor);
     void DrawTextboxCenteredMultiline(const std::string& text, int textsize, float scaleFactor);
@@ -29,5 +28,3 @@ namespace Geometry {
 
     static constexpr Color LIGHTBLUE = {230, 230, 255, 255};
 }
-
-#endif//DRAWGEOMETRY_H

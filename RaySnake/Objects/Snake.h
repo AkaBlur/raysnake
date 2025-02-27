@@ -1,9 +1,5 @@
-//
-// Created by filip on 08.02.25.
-//
+#pragma once
 
-#ifndef SNAKE_H
-#define SNAKE_H
 #include <array>
 #include <cstdint>
 #include <random>
@@ -34,7 +30,8 @@ struct SnakePart
     SnakePart* nextPartToHead = nullptr;
 };
 
-class Snake {
+class Snake
+{
 public:
     explicit Snake(uint8_t fieldSizeX, uint8_t fieldSizeY);
     
@@ -109,7 +106,3 @@ private:
         }
     }
 };
-
-
-
-#endif //SNAKE_H

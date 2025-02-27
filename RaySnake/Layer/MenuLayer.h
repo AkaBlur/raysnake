@@ -5,8 +5,8 @@
 class MenuLayer
 {
 public:
-	MenuLayer(RaySnake::GameStack& mainGameStack) :
-		m_LastKeyPressed(0), m_MenuIndex(0), m_GameStack(mainGameStack) { };
+	MenuLayer(RaySnake::AppSettings& mainSettings) :
+		m_LastKeyPressed(0), m_MenuIndex(0), m_AppSettings(mainSettings) { };
 
 public:
 	void Draw(float timestep);
@@ -21,7 +21,7 @@ private:
 	// menu index
 	int m_MenuIndex;
 
-	// game state of main game
-	RaySnake::GameStack& m_GameStack;
+	// settings of main application
+	RaySnake::AppSettings& m_AppSettings;
 
 };

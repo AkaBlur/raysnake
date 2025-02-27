@@ -10,25 +10,29 @@
 #include "Util/Timer.h"
 
 
-struct LayerStack {
-    LayerStack(RaySnake::GameStack& stack) :
-        Menu{stack}, SnakeGame(stack) {};
+struct AppLayers
+{
+    AppLayers(RaySnake::AppSettings& settings) :
+        Menu{settings}, SnakeGame(settings) {};
 
     MenuLayer Menu;
     GameLayer SnakeGame;
 };
 
-void MenuLoop(RaySnake::GameStack& gameStack, LayerStack& layerStack) {
-    layerStack.Menu.OnUpdate(gameStack.FrameTime);
-    layerStack.Menu.Draw(gameStack.FrameTime);
+void MenuLoop(RaySnake::AppSettings& settings, AppLayers& layerStack)
+{
+    layerStack.Menu.OnUpdate(settings.FrameTime);
+    layerStack.Menu.Draw(settings.FrameTime);
 }
 
-void GameLoop(RaySnake::GameStack& gameStack, LayerStack& layerStack) {
-    layerStack.SnakeGame.OnUpdate(gameStack.FrameTime);
+void GameLoop(RaySnake::AppSettings& settings, AppLayers& layerStack)
+{
+    layerStack.SnakeGame.OnUpdate(settings.FrameTime);
     layerStack.SnakeGame.Draw();
 }
 
-void EndScreen(RaySnake::GameStack& gameStack, float screenTime, float totalFadeTime) {
+void EndScreen(RaySnake::AppSettings& settings, float screenTime, float totalFadeTime)
+{
     float FadeRatio = 1.0f - (screenTime / totalFadeTime);
     Vector2 ScreenMid = {(float) GetScreenWidth() * 0.5f, (float) GetScreenHeight() * 0.5f};
 
@@ -36,58 +40,60 @@ void EndScreen(RaySnake::GameStack& gameStack, float screenTime, float totalFade
     AlphaValue *= FadeRatio;
     Color TextColor = {0, 0, 0, (unsigned char) round(AlphaValue)};
 
-    DrawText("Thanks for playing!", ScreenMid.x - 170.0f * gameStack.GameScaling, ScreenMid.y - 50.f * gameStack.GameScaling, 36 * gameStack.GameScaling, TextColor);
+    DrawText("Thanks for playing!", ScreenMid.x - 170.0f * settings.AppScaling, ScreenMid.y - 50.f * settings.AppScaling, 36 * settings.AppScaling, TextColor);
 
 }
 
 int main(int argc, char* argv[])
 {
-    RaySnake::GameStack Game;
+    RaySnake::AppSettings Settings;
 
-    InitWindow(640 * Game.GameScaling, 480 * Game.GameScaling, "Totally accurate Snake-Game");
+    InitWindow(640 * Settings.AppScaling, 480 * Settings.AppScaling, "Totally accurate Snake-Settings");
     SetTargetFPS(288);
 
-    LayerStack GameLayers(Game);
+    AppLayers LayerStack(Settings);
 
-    Game.IsRunning = true;
+    Settings.IsRunning = true;
 
     Timer EndScreenTimer;
-    Game.GameMode = RaySnake::GameMode::MainMenu;
+    Settings.GameMode = RaySnake::GameMode::MainMenu;
 
-    while (!WindowShouldClose() && Game.IsRunning)
+    while (!WindowShouldClose() && Settings.IsRunning)
     {
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        Game.FrameTime = GetFrameTime();
+        Settings.FrameTime = GetFrameTime();
 
         // FPS counter
         char FPS[10] = "";
         sprintf(FPS, "%d", GetFPS());
         DrawText(FPS, 2, 2, 12, GREEN);
 
-        switch (Game.GameMode) {
+        switch (Settings.GameMode)
+        {
             case RaySnake::GameMode::MainMenu:
-                MenuLoop(Game, GameLayers);
+                MenuLoop(Settings, LayerStack);
                 break;
 
             case RaySnake::GameMode::Playing:
-                GameLoop(Game, GameLayers);
+                GameLoop(Settings, LayerStack);
                 break;
 
             case RaySnake::GameMode::Options:
                 break;
 
-            case RaySnake::GameMode::EndScreen: {
-                float TimerVal = EndScreenTimer.Tick(Game.FrameTime);
-                EndScreen(Game, TimerVal, 2.0f);
+            case RaySnake::GameMode::EndScreen:
+            {
+                float TimerVal = EndScreenTimer.Tick(Settings.FrameTime);
+                EndScreen(Settings, TimerVal, 2.0f);
                 if (TimerVal > 2.0f)
-                    Game.GameMode = RaySnake::GameMode::Exit;
+                    Settings.GameMode = RaySnake::GameMode::Exit;
 
                 break;
             }
 
             case RaySnake::GameMode::Exit:
-                Game.IsRunning = false;
+                Settings.IsRunning = false;
                 break;
 
             default:

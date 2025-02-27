@@ -1,11 +1,7 @@
-//
-// Created by filip on 21.01.25.
-//
+#pragma once
 
-#ifndef TIMER_H
-#define TIMER_H
-
-class Timer {
+class Timer
+{
 public:
     Timer() :
         m_TotalTimeSeconds(0.0f) {};
@@ -26,7 +22,3 @@ private:
     float m_TotalTimeSeconds;
 
 };
-
-
-
-#endif //TIMER_H

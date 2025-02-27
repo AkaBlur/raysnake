@@ -1,7 +1,3 @@
-//
-// Created by filip on 12.02.25.
-//
-
 #include "Random.h"
 
 #include <algorithm>

@@ -1,7 +1,3 @@
-//
-// Created by filip on 08.02.25.
-//
-
 #include "Snake.h"
 
 #include <iostream>

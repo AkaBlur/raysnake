@@ -9,10 +9,11 @@
 #include "Util/Random.h"
 #include "Util/Timer.h"
 
-class GameLayer {
+class GameLayer
+{
 public:
-    GameLayer(RaySnake::GameStack& mainGameStack) :
-        m_GameStack(mainGameStack), m_GameSettings(), m_Snake(m_GameSettings.BoardSize, m_GameSettings.BoardSize),
+    GameLayer(RaySnake::AppSettings& mainSettings) :
+        m_AppSettings(mainSettings), m_GameSettings(), m_Snake(m_GameSettings.BoardSize, m_GameSettings.BoardSize),
         m_PauseMenu("Paused"), m_DeadMenu("You died!")
     {
         Init();
@@ -35,13 +36,15 @@ public:
     void Reset();
 
 private:
-    enum class GameState {
+    enum class GameState
+    {
         Playing = 0,
         Paused = 1,
         GameOver = 2
     };
 
-    struct Assets {
+    struct Assets
+    {
         // Snake Assets
         Image SnakeHead;
         Image SnakeHeadEat;
@@ -52,7 +55,8 @@ private:
         Image Mine;
     } m_ImageAssets;
 
-    struct TexturesSnake {
+    struct TexturesSnake
+    {
         Texture2D SnakeHead;
         Texture2D SnakeHeadEat;
         Texture2D SnakeHeadBlink;
@@ -64,17 +68,20 @@ private:
 
     static constexpr float C_SNAKE_MOVESPEED_BASE = 1.0f;
     static constexpr float C_SNAKE_MOVESPEED_MOD = 0.75f;
+    static constexpr float C_SNAKE_MOVESPEED_MIN = 0.2f;
 
-    struct GameSettings {
-        // snakes' time to move in seconds
-        float SnakeMoveTime = C_SNAKE_MOVESPEED_BASE;
+    struct GameSettings
+    {
         // board (quadratic) size in tiles
         uint8_t BoardSize = 20;
+        // game level, counted from number of foods
+        uint32_t SnakeLevel = 0;
+        // snakes' time to move in seconds
+        float SnakeMoveTime = C_SNAKE_MOVESPEED_BASE;
     } m_GameSettings;
 
-
 private:
-    RaySnake::GameStack& m_GameStack;
+    RaySnake::AppSettings& m_AppSettings;
     GameState m_GameState = GameState::Playing;
     Random::RandomEngine m_RandomEngine;
 
@@ -119,7 +126,12 @@ private:
     //----------------------------------------------------
     static constexpr float C_ANIM_BLINK_TIME = 0.15f;
     // some 'random' animation timings
-    static constexpr uint8_t C_ANIM_BLINKWAIT[32] = {5,3,4,5,2,5,4,1,2,5,6,5,2,3,4,5,4,2,4,2,3,4,4,5,2,3,5,1,1,4,5,2};
+    static constexpr uint8_t C_ANIM_BLINKWAIT[32] = {
+        5,3,4,5,2,5,4,1,
+        2,5,6,5,2,3,4,5,
+        4,2,4,2,3,4,4,5,
+        2,3,5,1,1,4,5,2
+    };
 
 private:
     void m_PollInputs();

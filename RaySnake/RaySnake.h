@@ -1,8 +1,9 @@
-#ifndef RAYSNAKE_H
-#define RAYSNAKE_H
+#pragma once
 
-namespace RaySnake {
-    enum class GameMode {
+namespace RaySnake 
+{
+    enum class GameMode
+    {
         MainMenu = 0,
         Playing = 1,
         Options = 2,
@@ -10,16 +11,15 @@ namespace RaySnake {
         Exit = 4
     };
 
-    struct GameStack {
-        GameStack() :
-            IsRunning(false), FrameTime(0.0f), GameMode(RaySnake::GameMode::MainMenu), GameScaling(2.0f) {};
+    struct AppSettings
+    {
+        AppSettings() :
+            IsRunning(false), FrameTime(0.0f), GameMode(RaySnake::GameMode::MainMenu), AppScaling(2.0f) {};
 
         // game state and stats
         bool IsRunning;
         float FrameTime;
         RaySnake::GameMode GameMode;
-        float GameScaling;
+        float AppScaling;
     };
 }
-
-#endif //RAYSNAKE_H

@@ -1,7 +1,3 @@
-//
-// Created by filip on 16.01.25.
-//
-
 #include "DrawGeometry.h"
 
 #include <algorithm>
@@ -9,7 +5,8 @@
 
 #include "raymath.h"
 
-namespace Geometry {
+namespace Geometry
+{
     static std::vector<Vector2> emptyPositions;
 
     static void m_DrawMenuBase(const std::string& text, uint32_t textsize, bool drawMenu, std::vector<Vector2>& menuItemPositions, float scaleFactor)
@@ -97,7 +94,8 @@ namespace Geometry {
         }
     }
 
-    void DrawTriangleEquilateral(const Vector2 &midpoint, float length, float rotation, Color color) {
+    void DrawTriangleEquilateral(const Vector2 &midpoint, float length, float rotation, Color color)
+    {
         Vector2 TopVec = {
             midpoint.x, midpoint.y + (length * 0.5773502f)
         };
@@ -115,7 +113,8 @@ namespace Geometry {
 
     }
 
-    void DrawKey(const Vector2 &position, float size, const char* key, Color color, uint32_t keycodeLength) {
+    void DrawKey(const Vector2 &position, float size, const char* key, Color color, uint32_t keycodeLength)
+    {
         float Offset = size * 0.15f;
         float TextSize = size / keycodeLength;
 
@@ -124,7 +123,43 @@ namespace Geometry {
 
     }
 
-    void DrawArrow(Vector2 startPosition, float length, float rotation, Color color) {
+    void DrawTextMultiline(const Vector2& position, const std::string &text, int textsize, float scaleFactor, Color color)
+    {
+        uint32_t FontSize = textsize * scaleFactor;
+        uint32_t LineHeight = textsize * scaleFactor * 1.2f;
+        // measure newline count
+        uint32_t LineCount = 1;
+        std::string::const_iterator LineIt = std::find(text.begin(), text.end(), '\n');
+        while (LineIt != text.end())
+        {
+            LineCount++;
+            LineIt++;
+            LineIt = std::find(LineIt, text.end(), '\n');
+        }
+
+        std::string TextDrawn(text);
+        int LineIndex = 0;
+        std::string::iterator SubStrPosition = TextDrawn.begin();
+        std::string::iterator NextStrPosition = std::find(TextDrawn.begin(), TextDrawn.end(), '\n');
+        
+        while (LineIndex < LineCount)
+        {
+            *NextStrPosition = '\0';
+
+            Vector2 TextPosDraw = {position.x, (position.y + LineHeight * LineIndex)};
+
+            DrawText(&(*SubStrPosition), TextPosDraw.x, TextPosDraw.y, FontSize, color);
+
+            LineIndex++;
+            NextStrPosition++;
+            SubStrPosition = NextStrPosition;
+            NextStrPosition = std::find(SubStrPosition, TextDrawn.end(), '\n');
+
+        }
+    }
+
+    void DrawArrow(Vector2 startPosition, float length, float rotation, Color color)
+    {
         Vector2 EndPos = {
             startPosition.x + length * cos(rotation * PI / 180.0f), startPosition.y + length * sin(rotation * PI / 180.0f)};
         DrawLineEx(startPosition, EndPos, 3.0f, color);
@@ -138,7 +173,8 @@ namespace Geometry {
 
     }
 
-    void DrawTextboxCentered(const char *text, int textsize, float scaleFactor) {
+    void DrawTextboxCentered(const char *text, int textsize, float scaleFactor)
+    {
         Vector2 ScreenSize = {(float) GetScreenWidth(), (float) GetScreenHeight()};
         int FontSize = textsize * scaleFactor;
         int TextLength = MeasureText(text, FontSize);

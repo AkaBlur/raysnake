@@ -1,5 +1,6 @@
 #include "GameLayer.h"
 
+#include <format>
 #include <iostream>
 #include <ostream>
 
@@ -77,12 +78,8 @@ void GameLayer::OnUpdate(float deltaTime)
 
     case GameState::Paused:
         if (m_LastKeyPressed == KEY_Q)
-            m_GameStack.GameMode = RaySnake::GameMode::EndScreen;
+            m_AppSettings.GameMode = RaySnake::GameMode::EndScreen;
         break;
-
-        m_DeadMenu.AddChoice("Restart", "R");
-        m_DeadMenu.AddChoice("Return to Menu", "Esc");
-        m_DeadMenu.AddChoice("Exit", "Q");
 
     case GameState::GameOver:
         switch (m_LastKeyPressed)
@@ -93,11 +90,11 @@ void GameLayer::OnUpdate(float deltaTime)
             
         case KEY_ESCAPE:
             Reset();
-            m_GameStack.GameMode = RaySnake::GameMode::MainMenu;
+            m_AppSettings.GameMode = RaySnake::GameMode::MainMenu;
             break;
 
         case KEY_Q:
-            m_GameStack.GameMode = RaySnake::GameMode::EndScreen;
+            m_AppSettings.GameMode = RaySnake::GameMode::EndScreen;
             break;
             
         default:
@@ -160,23 +157,39 @@ void GameLayer::Draw()
     m_DrawSnake();
     // food
     DrawTextureEx(m_Textures.Food, Vector2Add(Vector2Scale(m_FoodPos, m_TileSizeBase().x), m_GameAreaTopCorner), 0,
-                  m_GameStack.GameScaling, WHITE);
-
-    //m_DrawDebugSnakePos();
+                  m_AppSettings.AppScaling, WHITE);
 
     // menu and sidebar
     switch (m_GameState)
     {
         case GameState::Playing:
-            DrawText("Let's go", 25 * m_GameStack.GameScaling, 20 * m_GameStack.GameScaling, 18 * m_GameStack.GameScaling, BLACK);
+        {
+            // game played
+            DrawText("Let's go", 25 * m_AppSettings.AppScaling, 20 * m_AppSettings.AppScaling, 18 * m_AppSettings.AppScaling, BLACK);
+            // score
+            std::string ScoreText(128, '\0');
+            sprintf(ScoreText.data(), "Score:\n%d", m_FoodCount);
+            Geometry::DrawTextMultiline({25 * m_AppSettings.AppScaling, 50 * m_AppSettings.AppScaling}, ScoreText, 18, m_AppSettings.AppScaling, BLACK);
+            // level
+            std::string LevelText(128, '\0');
+            sprintf(LevelText.data(), "Level: %d", (m_GameSettings.SnakeLevel + 1));
+            
+            uint32_t TextLen = MeasureText(LevelText.c_str(), 18 * m_AppSettings.AppScaling);
+            Vector2 ScreenDim = {(float) GetScreenWidth(),  (float) GetScreenHeight()};
+            Vector2 TextPos = {(ScreenDim.x / 2 - TextLen / 2), 5 * m_AppSettings.AppScaling};
+
+            Geometry::DrawTextMultiline(TextPos, LevelText, 18, m_AppSettings.AppScaling, GREEN);
+
             break;
 
+        }
+
         case GameState::Paused:
-            m_PauseMenu.Draw(m_GameStack.GameScaling);
+            m_PauseMenu.Draw(m_AppSettings.AppScaling);
             break;
 
         case GameState::GameOver:
-            m_DeadMenu.Draw(m_GameStack.GameScaling);
+            m_DeadMenu.Draw(m_AppSettings.AppScaling);
             break;
 
         default:
@@ -206,7 +219,7 @@ void GameLayer::m_PollInputs()
 
 Vector2 GameLayer::m_TileSizeBase() const
 {
-    float BaseTileSize = (float) (m_ImageAssets.SnakeHead.width) * m_GameStack.GameScaling;
+    float BaseTileSize = (float) (m_ImageAssets.SnakeHead.width) * m_AppSettings.AppScaling;
     return { BaseTileSize, BaseTileSize };
 }
 
@@ -227,8 +240,13 @@ void GameLayer::m_SnakeAdvance(float deltaTime)
                 m_PositionFood();
                 m_FoodCount++;
 
-                float MoveSpeedMod = pow(C_SNAKE_MOVESPEED_MOD, (float) ((int) m_FoodCount / 5));
+                m_GameSettings.SnakeLevel = (m_FoodCount >> 2);
+
+                float MoveSpeedMod = pow(C_SNAKE_MOVESPEED_MOD, (float) m_GameSettings.SnakeLevel);
                 m_GameSettings.SnakeMoveTime = C_SNAKE_MOVESPEED_BASE * MoveSpeedMod;
+
+                if (m_GameSettings.SnakeMoveTime < C_SNAKE_MOVESPEED_MIN)
+                    m_GameSettings.SnakeMoveTime = C_SNAKE_MOVESPEED_MIN;
 
                 break;
 
@@ -237,8 +255,10 @@ void GameLayer::m_SnakeAdvance(float deltaTime)
         case Snake::SnakeState::DEAD:
             m_GameState = GameState::GameOver;
             break;
+
         default:
             break;
+            
         }
     }
 }
@@ -299,14 +319,14 @@ void GameLayer::m_DrawSnake()
         Vector2 BodyTilePosition = {(float) bodyPart.x, (float) bodyPart.y};
         Geometry::DrawTextureRotated(m_Textures.SnakeBody, TextureSize,
                                      Vector2Add(Vector2Scale(Vector2SubtractValue(BodyTilePosition, 0.5f), TileScale),
-                                                m_GameAreaTopCorner), bodyPart.rotation, m_GameStack.GameScaling);
+                                                m_GameAreaTopCorner), bodyPart.rotation, m_AppSettings.AppScaling);
     }
 
     // tail
     Vector2 TailPosition = { (float) m_Snake.PartTail().x, (float) m_Snake.PartTail().y };
     Geometry::DrawTextureRotated(m_Textures.SnakeTail, TextureSize,
                                  Vector2Add(Vector2Scale(Vector2SubtractValue(TailPosition, 0.5f), TileScale),
-                                            m_GameAreaTopCorner), m_Snake.PartTail().rotation, m_GameStack.GameScaling);
+                                            m_GameAreaTopCorner), m_Snake.PartTail().rotation, m_AppSettings.AppScaling);
 
 }
 
@@ -317,7 +337,7 @@ void GameLayer::m_DrawSnakeHead(const Texture2D& snakeHead, float tileSize, cons
     Geometry::DrawTextureRotated(snakeHead,
                                  textureSize,
                                  Vector2Add(Vector2Scale(Vector2SubtractValue(HeadTilePosition, 0.5f), tileSize), m_GameAreaTopCorner),
-                                 m_Snake.PartHead().rotation, m_GameStack.GameScaling);
+                                 m_Snake.PartHead().rotation, m_AppSettings.AppScaling);
 }
 
 void GameLayer::m_DrawGameArea()

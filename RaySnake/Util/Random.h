@@ -1,9 +1,5 @@
-//
-// Created by filip on 12.02.25.
-//
+#pragma once
 
-#ifndef RANDOM_H
-#define RANDOM_H
 #include <random>
 
 namespace Random
@@ -14,5 +10,3 @@ namespace Random
 
     uint32_t GetRandomNumber(RandomEngine& engine, uint32_t max);
 }
-
-#endif //RANDOM_H
